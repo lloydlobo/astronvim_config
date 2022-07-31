@@ -88,17 +88,28 @@ local config = {
       -- { "andweeb/presence.nvim" },
       -- {
       --   "ray-x/lsp_signature.nvim",
-        {
-         "https://git.sr.ht/~whynothugo/lsp_lines.nvim",
-         config = function()
-           require("lsp_lines").setup()
-         end,
-        }
         --   event = "BufRead",
       --   config = function()
       --     require("lsp_signature").setup()
       --   end,
       -- },
+        {
+         "https://git.sr.ht/~whynothugo/lsp_lines.nvim",
+         config = function()
+           require("lsp_lines").setup()
+         end,
+        },
+      -- For rust analyzer highlighting & debugging
+      -- /.vscode/extensions/vadimcn.vscode-lldb-1.7.0/
+      -- https://github.com/simrat39/rust-tools.nvim#configuration
+        {
+          "simrat39/rust-tools.nvim",
+            event = "BufRead",
+           config = function ()
+             require("rust-tools").setup({})
+           end
+        },
+
     },
     -- All other entries override the setup() call for default plugins
     ["null-ls"] = function(config)
@@ -226,6 +237,9 @@ local config = {
     n = {
       -- second key is the lefthand side of the map
       ["<C-s>"] = { ":w!<cr>", desc = "Save File" },
+      -- https://git.sr.ht/~whynothugo/lsp_lines.nvim
+      -- ["<C-l>"] = { require("lsp_lines").toggle, desc = "Toggle lsp_lines"},
+      ["<C-l>"] = { function() require("lsp_lines").toggle() end, desc = "Toggle lsp_lines" },
     },
     t = {
       -- setting a mapping to false will disable it
