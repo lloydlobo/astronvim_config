@@ -102,13 +102,12 @@ local config = {
       -- For rust analyzer highlighting & debugging
       -- /.vscode/extensions/vadimcn.vscode-lldb-1.7.0/
       -- https://github.com/simrat39/rust-tools.nvim#configuration
-        {
-          "simrat39/rust-tools.nvim",
-            event = "BufRead",
-           config = function ()
-             require("rust-tools").setup({})
-           end
-        },
+        -- {
+        --   "simrat39/rust-tools.nvim",
+        --    config = function ()
+        --      require("rust-tools").setup({})
+        --    end
+        -- },
 
     },
     -- All other entries override the setup() call for default plugins
@@ -182,8 +181,8 @@ local config = {
     source_priority = {
       nvim_lsp = 1000,
       luasnip = 750,
-      buffer = 500,
-      path = 250,
+      path = 500,
+      buffer = 250,
     },
   },
 
