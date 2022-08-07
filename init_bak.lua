@@ -88,11 +88,27 @@ local config = {
       -- { "andweeb/presence.nvim" },
       -- {
       --   "ray-x/lsp_signature.nvim",
-      --   event = "BufRead",
+        --   event = "BufRead",
       --   config = function()
       --     require("lsp_signature").setup()
       --   end,
       -- },
+        {
+         "https://git.sr.ht/~whynothugo/lsp_lines.nvim",
+         config = function()
+           require("lsp_lines").setup()
+         end,
+        },
+      -- For rust analyzer highlighting & debugging
+      -- /.vscode/extensions/vadimcn.vscode-lldb-1.7.0/
+      -- https://github.com/simrat39/rust-tools.nvim#configuration
+        -- {
+        --   "simrat39/rust-tools.nvim",
+        --    config = function ()
+        --      require("rust-tools").setup({})
+        --    end
+        -- },
+
     },
     -- All other entries override the setup() call for default plugins
     ["null-ls"] = function(config)
@@ -102,8 +118,9 @@ local config = {
       -- https://github.com/jose-elias-alvarez/null-ls.nvim/tree/main/lua/null-ls/builtins/diagnostics
       config.sources = {
         -- Set a formatter
-        null_ls.builtins.formatting.stylua,
-        null_ls.builtins.formatting.prettier,
+        null_ls.builtins.formatting.rufo,
+        -- Set a linter
+        null_ls.builtins.diagnostics.rubocop,
       }
       -- set up null-ls's on_attach function
       config.on_attach = function(client)
@@ -121,13 +138,8 @@ local config = {
     treesitter = {
       ensure_installed = { "lua" },
     },
-    -- use mason-lspconfig to configure LSP installations
-    ["mason-lspconfig"] = {
+    ["nvim-lsp-installer"] = {
       ensure_installed = { "sumneko_lua" },
-    },
-    -- use mason-tool-installer to configure DAP/Formatters/Linter installation
-    ["mason-tool-installer"] = {
-      ensure_installed = { "prettier", "stylua" },
     },
     packer = {
       compile_path = vim.fn.stdpath "data" .. "/packer_compiled.lua",
@@ -144,6 +156,21 @@ local config = {
     },
   },
 
+  -- Modify which-key registration
+  ["which-key"] = {
+    -- Add bindings
+    register_mappings = {
+      -- first key is the mode, n == normal mode
+      n = {
+        -- second key is the prefix, <leader> prefixes
+        ["<leader>"] = {
+          -- which-key registration table for normal mode, leader prefix
+          -- ["N"] = { "<cmd>tabnew<cr>", "New Buffer" },
+        },
+      },
+    },
+  },
+
   -- CMP Source Priorities
   -- modify here the priorities of default cmp sources
   -- higher value == higher priority
@@ -154,14 +181,14 @@ local config = {
     source_priority = {
       nvim_lsp = 1000,
       luasnip = 750,
-      buffer = 500,
-      path = 250,
+      path = 500,
+      buffer = 250,
     },
   },
 
   -- Extend LSP configuration
   lsp = {
-    -- enable servers that you already have installed without mason
+    -- enable servers that you already have installed without lsp-installer
     servers = {
       -- "pyright"
     },
@@ -199,46 +226,23 @@ local config = {
 
   -- Diagnostics configuration (for vim.diagnostics.config({}))
   diagnostics = {
-    virtual_text = true,
+   -- DISABLED FOR LSP-LINES  
+    -- virtual_text = true,
     underline = true,
   },
 
-  -- Mapping data with "desc" stored directly by vim.keymap.set().
-  --
-  -- Please use this mappings table to set keyboard mapping since this is the
-  -- lower level configuration and more robust one. (which-key will
-  -- automatically pick-up stored data by this setting.)
   mappings = {
     -- first key is the mode
     n = {
       -- second key is the lefthand side of the map
-      -- mappings seen under group name "Buffer"
-      ["<leader>bb"] = { "<cmd>tabnew<cr>", desc = "New tab" },
-      ["<leader>bc"] = { "<cmd>BufferLinePickClose<cr>", desc = "Pick to close" },
-      ["<leader>bj"] = { "<cmd>BufferLinePick<cr>", desc = "Pick to jump" },
-      ["<leader>bt"] = { "<cmd>BufferLineSortByTabs<cr>", desc = "Sort by tabs" },
-      -- quick save
-      -- ["<C-s>"] = { ":w!<cr>", desc = "Save File" },  -- change description but the same command
+      ["<C-s>"] = { ":w!<cr>", desc = "Save File" },
+      -- https://git.sr.ht/~whynothugo/lsp_lines.nvim
+      -- ["<C-l>"] = { require("lsp_lines").toggle, desc = "Toggle lsp_lines"},
+      ["<C-l>"] = { function() require("lsp_lines").toggle() end, desc = "Toggle lsp_lines" },
     },
     t = {
       -- setting a mapping to false will disable it
       -- ["<esc>"] = false,
-    },
-  },
-
-  -- Modify which-key registration (Use this with mappings table in the above.)
-  ["which-key"] = {
-    -- Add bindings which show up as group name
-    register_mappings = {
-      -- first key is the mode, n == normal mode
-      n = {
-        -- second key is the prefix, <leader> prefixes
-        ["<leader>"] = {
-          -- third key is the key to bring up next level and its displayed
-          -- group name in which-key top level menu
-          ["b"] = { name = "Buffer" },
-        },
-      },
     },
   },
 
